@@ -1,3 +1,5 @@
+#include<windows.h>
+
 #include<iostream>
 #include<cstring>
 #include<list>
@@ -98,13 +100,28 @@ size_t get_max_size(const std::list<std::string>& lines)
 	}
 	return max;
 }
+std::list<std::string> read_from_stdin()
+{
+	//read data like echo "hello, world" | cowsay
+	std::list<std::string> lst;
+	std::string lineInput;
+	while (std::getline(std::cin, lineInput)) {
+		lst.push_back(lineInput+" ");
+	}
+
+	return lst;
+}
 int main(int argc, char** argv)
 {
-	setlocale(LC_ALL, "");
-
-	//read from cli arguments or from file
-	auto spec = argc  > 1?std::string(argv[1]):"";
-	if (spec == "-t")
+	auto piped_data = read_from_stdin();
+	auto spec = argc > 1 ? std::string(argv[1]) : "";//read from cli arguments or from file
+	
+	if (!piped_data.empty())
+	{
+		auto len = get_max_size(piped_data);
+		print_message(len, piped_data);
+	}
+	else if (spec == "-t")
 	{
 		auto len = compute_horizontal_border_length(argc, argv);
 		auto lines = compute_lines(argc, argv, len);
