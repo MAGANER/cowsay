@@ -1,7 +1,8 @@
 #include<iostream>
 #include<cstring>
 #include<list>
-
+#include <sstream>
+#include<fstream>
 
 size_t compute_horizontal_border_length(int argc, char** argv)
 {
@@ -18,13 +19,8 @@ std::list<std::string> compute_lines(int argc, char** argv, size_t len)
 {
 	std::list<std::string> lines;
 
-	if (argc == 1)
-	{
-		lines.push_back("moo?");
-		return lines;
-	}
 	std::string line;
-	for (size_t i = 1; i < argc; i++)
+	for (size_t i = 2; i < argc; i++)
 	{
 		if (line.size() + strlen(argv[i]) >= len)
 		{
@@ -42,6 +38,20 @@ std::list<std::string> compute_lines(int argc, char** argv, size_t len)
 	lines.push_back(line);
 	return lines;
 }
+std::list<std::string> read_lines(const std::string& file)
+{
+	std::list<std::string> lines;
+	std::ifstream input(file);
+	if (input)
+	{
+		for (std::string line; getline(input, line); )
+		{
+			lines.push_back(line);
+		}
+	}
+
+	return lines;
+}
 void print_cow()
 {
 	std::cout << std::endl;
@@ -53,13 +63,10 @@ void print_cow()
 			  << "                   ||----w |" << std::endl
 			  << "                   ||     ||" << std::endl;
 }
-int main(int argc, char** argv)
+
+void print_message(size_t len,const std::list<std::string>& lines)
 {
-	auto len = compute_horizontal_border_length(argc, argv);
-
-	auto lines = compute_lines(argc, argv, len);
-
-	for (size_t i = 0; i < len+2;i++)std::cout << "-";
+	for (size_t i = 0; i < len + 2; i++)std::cout << "-";
 	std::cout << std::endl;
 
 	for (auto& l : lines)
@@ -71,8 +78,53 @@ int main(int argc, char** argv)
 		std::cout << "|";
 		std::cout << std::endl;
 	}
-	for (size_t i = 0; i < len+2;i++)std::cout << "=";
+	for (size_t i = 0; i < len + 2; i++)std::cout << "=";
 
 	print_cow();
+}
+void print_empty_message()
+{
+	std::list<std::string> line;
+	line.push_back("moo?");
+	print_message(5, line);
+}
+size_t get_max_size(const std::list<std::string>& lines)
+{
+	size_t max = (*lines.begin()).size();
+	for (auto& l : lines)
+	{
+		if (l.size() > max)
+			max = l.size();
+	}
+	return max;
+}
+int main(int argc, char** argv)
+{
+	setlocale(LC_ALL, "");
+
+	//read from cli arguments or from file
+	auto spec = argc  > 1?std::string(argv[1]):"";
+	if (spec == "-t")
+	{
+		auto len = compute_horizontal_border_length(argc, argv);
+		auto lines = compute_lines(argc, argv, len);
+		print_message(len, lines);
+	}
+	else if (spec == "-f" and argc == 3)
+	{
+		auto lines = read_lines(argv[2]);
+		if (lines.empty())
+			print_empty_message();
+		else
+		{
+			auto len = get_max_size(lines);
+			print_message(len, lines);
+		}
+	}
+	else
+	{
+		print_empty_message();
+	}
+
 	return 0;
 }
