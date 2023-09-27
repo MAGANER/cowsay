@@ -27,28 +27,3 @@ $ cowsay -f ..\.gitignore
                    ||----w |
                    ||     ||
 ```
-
-```
-λ l -f  | cowsay
----------------------------------------------------
-| cowsay.Build.CppClean.log            |
-| cowsay.exe                           |
-| cowsay.exe.recipe                    |
-| cowsay.iobj                          |
-| cowsay.ipdb                          |
-| cowsay.log                           |
-| cowsay.pdb                           |
-| cowsay.vcxproj.FileListAbsolute.txt  |
-| main.obj                             |
-| vc143.pdb                            |
-===================================================
-          \
-           \
-               ^__^
-               (oo)_______
-               (__)\       )\/\
-                   ||----w |
-                   ||     ||
-
-
-```
