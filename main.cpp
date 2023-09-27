@@ -1,4 +1,4 @@
-#include<iostream>
+#include<cstdlib>
 #include<cstring>
 #include<list>
 #include <sstream>
@@ -55,37 +55,37 @@ std::list<std::string> read_lines(const std::string& file)
 	}
 	return lines;
 }
-void print_cow()
+inline void print_cow()
 {
-	std::cout << std::endl;
-	std::cout << "          \\"<<std::endl
-			  << "           \\" << std::endl
-			  << "               ^__^" << std::endl
-			  << "               (oo)\_______" << std::endl
-			  << "               (__)\\       )\\/\\" << std::endl
-			  << "                   ||----w |" << std::endl
-			  << "                   ||     ||" << std::endl;
+	//one system call is better then several
+	//also i know it's hard to read and i don't care
+	printf("\n          \\\n           \\\n               ^__^\n               (oo)\_______\n               (__)\\       )\\/\\\n                   ||----w |\n                   ||     ||\n");
 }
 
 void print_message(size_t len,const std::list<std::string>& lines)
 {
 	//print upper delimiter
-	for (size_t i = 0; i < len + 2; i++)std::cout << "-";
-	std::cout << std::endl;
+	for (size_t i = 0; i < len + 2; i++)printf("-");  //std::cout << "-";
+	//std::cout << std::endl;
+	printf("\n");
 
 	for (auto& l : lines)
 	{
-		std::cout << "| ";
-		std::cout << l;
+		printf("| %s",l.c_str());
+		//std::cout << "| ";
+		//std::cout << l;
 		auto diff = abs((int)len - (int)l.size());
-		for (auto i = 0; i < diff; i++)std::cout << " ";
-		std::cout << "|";
-		std::cout << std::endl;
+		for (auto i = 0; i < diff; i++)printf(" "); //std::cout << " ";
+		
+		printf("|");
+		printf("\n");
+		//std::cout << "|";
+		//std::cout << std::endl;
 	}
 
 
 	//print bottom delimiter
-	for (size_t i = 0; i < len + 2; i++)std::cout << "=";
+	for (size_t i = 0; i < len + 2; i++)printf("="); //std::cout << "=";
 
 	print_cow();
 }
