@@ -1,5 +1,5 @@
 # cowsay
-yet another cowsay clone that pretends to be better than any other clone
+yet another cowsay clone that pretends to be better than any other ones.
 
 ## Usage
 ```-f``` to pass file
