@@ -1,10 +1,9 @@
-#include<windows.h>
-
 #include<iostream>
 #include<cstring>
 #include<list>
 #include <sstream>
 #include<fstream>
+#include<filesystem>
 
 size_t compute_horizontal_border_length(int argc, char** argv)
 {
@@ -19,6 +18,7 @@ size_t compute_horizontal_border_length(int argc, char** argv)
 }
 std::list<std::string> compute_lines(int argc, char** argv, size_t len)
 {
+	//split argv arguments into lines with special size
 	std::list<std::string> lines;
 
 	std::string line;
@@ -42,16 +42,17 @@ std::list<std::string> compute_lines(int argc, char** argv, size_t len)
 }
 std::list<std::string> read_lines(const std::string& file)
 {
+	//read file line by line, if it's only regular file
+
 	std::list<std::string> lines;
-	std::ifstream input(file);
-	if (input)
+	if (std::filesystem::is_regular_file(file))
 	{
+		std::ifstream input(file);
 		for (std::string line; getline(input, line); )
 		{
 			lines.push_back(line);
 		}
 	}
-
 	return lines;
 }
 void print_cow()
@@ -68,6 +69,7 @@ void print_cow()
 
 void print_message(size_t len,const std::list<std::string>& lines)
 {
+	//print upper delimiter
 	for (size_t i = 0; i < len + 2; i++)std::cout << "-";
 	std::cout << std::endl;
 
@@ -80,6 +82,9 @@ void print_message(size_t len,const std::list<std::string>& lines)
 		std::cout << "|";
 		std::cout << std::endl;
 	}
+
+
+	//print bottom delimiter
 	for (size_t i = 0; i < len + 2; i++)std::cout << "=";
 
 	print_cow();
@@ -92,6 +97,7 @@ void print_empty_message()
 }
 size_t get_max_size(const std::list<std::string>& lines)
 {
+	//return the longest line in the list
 	size_t max = (*lines.begin()).size();
 	for (auto& l : lines)
 	{
@@ -100,28 +106,16 @@ size_t get_max_size(const std::list<std::string>& lines)
 	}
 	return max;
 }
-std::list<std::string> read_from_stdin()
-{
-	//read data like echo "hello, world" | cowsay
-	std::list<std::string> lst;
-	std::string lineInput;
-	while (std::getline(std::cin, lineInput)) {
-		lst.push_back(lineInput+" ");
-	}
 
-	return lst;
-}
 int main(int argc, char** argv)
 {
-	auto piped_data = read_from_stdin();
-	auto spec = argc > 1 ? std::string(argv[1]) : "";//read from cli arguments or from file
+	//read from cli arguments or from file
+	//if there is another argument, except the cowsay itself, then 
+	//we can check what is that option
+	auto spec = argc > 1 ? std::string(argv[1]) : "";
 	
-	if (!piped_data.empty())
-	{
-		auto len = get_max_size(piped_data);
-		print_message(len, piped_data);
-	}
-	else if (spec == "-t")
+
+	if (spec == "-t")
 	{
 		auto len = compute_horizontal_border_length(argc, argv);
 		auto lines = compute_lines(argc, argv, len);
