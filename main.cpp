@@ -1,9 +1,9 @@
-#include<cstdlib>
-#include<cstring>
-#include<list>
-#include <sstream>
-#include<fstream>
-#include<filesystem>
+#include<cstdlib>     //printf
+#include<cstring>     //strlen
+#include<list>        //list itself
+#include <sstream>    //getline
+#include<fstream>     //ifstream
+#include<filesystem>  //is_regular_file
 
 size_t compute_horizontal_border_length(int argc, char** argv)
 {
@@ -66,21 +66,15 @@ void print_message(size_t len,const std::list<std::string>& lines)
 {
 	//print upper delimiter
 	for (size_t i = 0; i < len + 2; i++)printf("-");  //std::cout << "-";
-	//std::cout << std::endl;
 	printf("\n");
 
 	for (auto& l : lines)
 	{
 		printf("| %s",l.c_str());
-		//std::cout << "| ";
-		//std::cout << l;
 		auto diff = abs((int)len - (int)l.size());
 		for (auto i = 0; i < diff; i++)printf(" "); //std::cout << " ";
 		
-		printf("|");
-		printf("\n");
-		//std::cout << "|";
-		//std::cout << std::endl;
+		printf("|\n");
 	}
 
 
