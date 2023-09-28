@@ -1,10 +1,20 @@
-#include<cstdlib>     //printf
+#include"PipeReader.h"
 #include<cstring>     //strlen
 #include<list>        //list itself
 #include <sstream>    //getline
 #include<fstream>     //ifstream
 #include<filesystem>  //is_regular_file
 
+std::list<std::string> split_string_by_newline(const std::string& str)
+{
+	auto result = std::list<std::string>{};
+	auto ss = std::stringstream{ str };
+
+	for (std::string line; std::getline(ss, line, '\n');)
+		result.push_back(line);
+
+	return result;
+}
 size_t compute_horizontal_border_length(int argc, char** argv)
 {
 	auto max = argc < 10 ? argc : 10;
@@ -99,37 +109,54 @@ size_t get_max_size(const std::list<std::string>& lines)
 			max = l.size();
 	}
 	return max;
+	
 }
 
 int main(int argc, char** argv)
 {
-	//read from cli arguments or from file
-	//if there is another argument, except the cowsay itself, then 
-	//we can check what is that option
-	auto spec = argc > 1 ? std::string(argv[1]) : "";
-	
+	char* src = nullptr;
+	size_t   len;
 
-	if (spec == "-t")
+	src = readall(stdin, &len);
+	if (src)
 	{
-		auto len = compute_horizontal_border_length(argc, argv);
-		auto lines = compute_lines(argc, argv, len);
+		auto lines = split_string_by_newline(std::string(src));
+		auto len = get_max_size(lines);
 		print_message(len, lines);
-	}
-	else if (spec == "-f" and argc == 3)
-	{
-		auto lines = read_lines(argv[2]);
-		if (lines.empty())
-			print_empty_message();
-		else
-		{
-			auto len = get_max_size(lines);
-			print_message(len, lines);
-		}
+
+		free(src);
 	}
 	else
 	{
-		print_empty_message();
+		//read from cli arguments or from file
+		//if there is another argument, except the cowsay itself, then 
+		//we can check what is that option
+		auto spec = argc > 1 ? std::string(argv[1]) : "";
+
+
+		if (spec == "-t")
+		{
+			auto len = compute_horizontal_border_length(argc, argv);
+			auto lines = compute_lines(argc, argv, len);
+			print_message(len, lines);
+		}
+		else if (spec == "-f" and argc == 3)
+		{
+			auto lines = read_lines(argv[2]);
+			if (lines.empty())
+				print_empty_message();
+			else
+			{
+				auto len = get_max_size(lines);
+				print_message(len, lines);
+			}
+		}
+		else
+		{
+			print_empty_message();
+		}
 	}
 
+	
 	return 0;
 }
