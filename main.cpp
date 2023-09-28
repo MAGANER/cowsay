@@ -140,7 +140,7 @@ int main(int argc, char** argv)
 			auto lines = compute_lines(argc, argv, len);
 			print_message(len, lines);
 		}
-		else if (spec == "-f" and argc == 3)
+		else if (spec == "-f" && argc == 3)
 		{
 			auto lines = read_lines(argv[2]);
 			if (lines.empty())
