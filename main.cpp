@@ -69,11 +69,11 @@ inline void print_cow()
 {
 	//one system call is better then several
 	std::string cow;
-	cow += "          \\ \n";
-	cow += "           \\ \n";
+	cow += "\n          \\\n";
+	cow += "           \\\n";
 	cow += "               ^__^ \n";
 	cow += "               (oo)_______ \n";
-	cow += "               (__)\       )\/ \n";
+	cow += "               (__)\       )\\/\\ \n";
 	cow += "                   ||----w |  \n";
 	cow += "                   ||     || \n";
 	
