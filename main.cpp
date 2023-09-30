@@ -68,8 +68,16 @@ std::list<std::string> read_lines(const std::string& file)
 inline void print_cow()
 {
 	//one system call is better then several
-	//also i know it's hard to read and i don't care
-	printf("\n          \\\n           \\\n               ^__^\n               (oo)\_______\n               (__)\\       )\\/\\\n                   ||----w |\n                   ||     ||\n");
+	std::string cow;
+	cow += "          \\ \n";
+	cow += "           \\ \n";
+	cow += "               ^__^ \n";
+	cow += "               (oo)_______ \n";
+	cow += "               (__)\       )\/ \n";
+	cow += "                   ||----w |  \n";
+	cow += "                   ||     || \n";
+	
+	printf(cow.c_str());
 }
 
 void print_message(size_t len,const std::list<std::string>& lines)
