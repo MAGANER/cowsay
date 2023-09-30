@@ -5,6 +5,10 @@
 #include<fstream>     //ifstream
 #include<filesystem>  //is_regular_file
 
+#ifdef __linux__
+#include<unistd.h>
+#endif
+
 std::list<std::string> split_string_by_newline(const std::string& str)
 {
 	auto result = std::list<std::string>{};
@@ -122,9 +126,14 @@ size_t get_max_size(const std::list<std::string>& lines)
 
 int main(int argc, char** argv)
 {
+
 	char* src = nullptr;
 	size_t   len;
 
+#ifdef __linux__
+  if(!isatty(0))
+  {
+#endif
 	src = readall(stdin, &len);
 	if (src)
 	{
@@ -134,6 +143,9 @@ int main(int argc, char** argv)
 
 		free(src);
 	}
+#ifdef __linux__	
+  }
+#endif
 	else
 	{
 		//read from cli arguments or from file
