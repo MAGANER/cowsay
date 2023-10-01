@@ -1,9 +1,9 @@
 #include"PipeReader.h"
-#include<cstring>     //strlen
-#include<list>        //list itself
+#include<vector>
 #include <sstream>    //getline
 #include<fstream>     //ifstream
 #include<filesystem>  //is_regular_file
+#include <iomanip>
 
 #ifdef __linux__
 #include<unistd.h>
@@ -19,16 +19,16 @@ bool isnewline(int ch)
 	}
 	return false;
 }
-std::list<std::string> split_string(const std::string& str)
+std::vector<std::string> split_string(const std::string& str)
 {
-	std::list<std::string> strings;
+	std::vector<std::string> strings;
 
 	std::string buffer;
 	for (auto& ch : str)
 	{
 		if (isnewline(ch))
 		{
-			strings.push_back(buffer);
+			strings.push_back("|"+buffer);
 			buffer.clear();
 		}
 		else
@@ -36,10 +36,10 @@ std::list<std::string> split_string(const std::string& str)
 	}
 	return strings;
 }
-std::list<std::string> compute_lines(int argc, char** argv, size_t len)
+std::vector<std::string> compute_lines(int argc, char** argv, size_t len)
 {
 	//split argv arguments into lines with special size
-	std::list<std::string> lines;
+	std::vector<std::string> lines;
 
 	std::string line;
 	for (size_t i = 1; i < argc; i++)
@@ -74,7 +74,7 @@ void print_cow()
 	
 	printf(cow.c_str());
 }
-void print_message(std::list<std::string>& lines)
+void print_message(std::vector<std::string>& lines)
 {
 	auto max_size = (*std::max_element(lines.begin(), lines.end(),
 		[](auto& a, auto& b)
@@ -84,7 +84,7 @@ void print_message(std::list<std::string>& lines)
 	)).size();
 	auto pad = [&](auto& s)
 	{
-		s = "| " +s;
+		s = "| " + s;
 		while (s.size() != max_size + 3)
 			s += " ";
 		s += "|";
@@ -98,9 +98,14 @@ void print_message(std::list<std::string>& lines)
 	}
 	printf("%s\n", std::string(max_size + 3, '=').c_str());
 }
+size_t get_max_size(const std::vector<std::string>& lines)
+{
+	return (*std::max_element(lines.begin(), lines.end(), [](auto& a, auto& b) { return a.size() < b.size(); })).size();
+}
+
+
 int main(int argc, char** argv)
 {
-
 	char* src = nullptr;
 	size_t   len;
 #ifdef __linux__
@@ -111,7 +116,11 @@ int main(int argc, char** argv)
 	if (src)
 	{
 		auto lines = split_string(src);
-		print_message(lines);
+		auto max = get_max_size(lines);
+
+		printf("%s\n", std::string(max + 2, '-').c_str()); //print high border
+		for (auto& l : lines)printf("%s\n", l.c_str());    //print message
+		printf("%s\n", std::string(max + 2, '=').c_str()); //print low border
 		print_cow();
 		free(src);
 	}
@@ -122,8 +131,7 @@ int main(int argc, char** argv)
 	{
 		if (argc == 1)
 		{
-			printf("Usage example #1: cat file | cowsay\n \
-				   Usage example #2: cowsay bla bla bla bla");
+			printf("Usage example #1: cat file | cowsay\nUsage example #2: cowsay bla bla bla bla");
 			return 0;
 		}
 		else
