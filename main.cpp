@@ -91,7 +91,7 @@ void print_message(size_t len,const std::list<std::string>& lines)
 		printf("| %s",l.c_str());
 		auto diff = abs((int)len - (int)l.size());
 		for (auto i = 0; i < diff; i++)printf(" "); //std::cout << " ";
-		
+
 		printf("|\n");
 	}
 
