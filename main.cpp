@@ -36,6 +36,7 @@ std::vector<std::string> split_string(const std::string& str)
 	}
 	return strings;
 }
+
 std::vector<std::string> compute_lines(int argc, char** argv, size_t len)
 {
 	//split argv arguments into lines with special size
@@ -102,7 +103,11 @@ size_t get_max_size(const std::vector<std::string>& lines)
 {
 	return (*std::max_element(lines.begin(), lines.end(), [](auto& a, auto& b) { return a.size() < b.size(); })).size();
 }
-
+void pad(std::string& line, size_t max)
+{
+	while (line.size() != max)
+		line += "#";
+}
 
 int main(int argc, char** argv)
 {
@@ -116,10 +121,19 @@ int main(int argc, char** argv)
 	if (src)
 	{
 		auto lines = split_string(src);
+		for(auto& l:lines)
+			l.erase(std::remove(l.begin(), l.end(), '\t'), l.end());
+
 		auto max = get_max_size(lines);
 
 		printf("%s\n", std::string(max + 2, '-').c_str()); //print high border
-		for (auto& l : lines)printf("%s\n", l.c_str());    //print message
+		for (auto& l : lines)
+		{
+			std::string s(max + 1, ' '); s += "|";
+			for (size_t i = 0; i < l.size(); i++)
+				s[i] = l[i];
+			printf("%s\n", s.c_str());    //print message
+		}
 		printf("%s\n", std::string(max + 2, '=').c_str()); //print low border
 		print_cow();
 		free(src);
