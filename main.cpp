@@ -77,27 +77,22 @@ void print_cow()
 }
 void print_message(std::vector<std::string>& lines)
 {
-	auto max_size = (*std::max_element(lines.begin(), lines.end(),
+	auto max = (*std::max_element(lines.begin(), lines.end(),
 		[](auto& a, auto& b)
 		{
 			return a.size() < b.size();
 		}
-	)).size();
-	auto pad = [&](auto& s)
-	{
-		s = "| " + s;
-		while (s.size() != max_size + 3)
-			s += " ";
-		s += "|";
-	};
+	)).size(); //get size of the highest element 
 
-	printf("%s\n", std::string(max_size + 3, '-').c_str());
-	for (auto& line : lines)
+	printf("%s\n", std::string(max + 2, '-').c_str()); //print high border
+	for (auto& l : lines)
 	{
-		pad(line);
-		printf("%s\n", line.c_str());
+		std::string s(max , ' '); s += "|";
+		for (size_t i = 0; i < l.size(); i++)
+			s[i] = l[i];
+		printf("| %s\n", s.c_str());    //print message
 	}
-	printf("%s\n", std::string(max_size + 3, '=').c_str());
+	printf("%s\n", std::string(max + 2, '=').c_str()); //print low border
 }
 size_t get_max_size(const std::vector<std::string>& lines)
 {
@@ -121,20 +116,12 @@ int main(int argc, char** argv)
 	if (src)
 	{
 		auto lines = split_string(src);
+
+		//get rid of tabs, because they will break cloud
 		for(auto& l:lines)
 			l.erase(std::remove(l.begin(), l.end(), '\t'), l.end());
 
-		auto max = get_max_size(lines);
-
-		printf("%s\n", std::string(max + 2, '-').c_str()); //print high border
-		for (auto& l : lines)
-		{
-			std::string s(max + 1, ' '); s += "|";
-			for (size_t i = 0; i < l.size(); i++)
-				s[i] = l[i];
-			printf("%s\n", s.c_str());    //print message
-		}
-		printf("%s\n", std::string(max + 2, '=').c_str()); //print low border
+		print_message(lines);
 		print_cow();
 		free(src);
 	}
@@ -145,7 +132,9 @@ int main(int argc, char** argv)
 	{
 		if (argc == 1)
 		{
-			printf("Usage example #1: cat file | cowsay\nUsage example #2: cowsay bla bla bla bla");
+			std::vector<std::string> l = {"moo?"};
+			print_message(l);
+			print_cow();
 			return 0;
 		}
 		else
