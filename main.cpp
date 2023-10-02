@@ -3,7 +3,8 @@
 #include <sstream>    //getline
 #include<fstream>     //ifstream
 #include<filesystem>  //is_regular_file
-#include <iomanip>
+#include<string>
+#include<algorithm>
 
 #ifdef __linux__
 #include<unistd.h>
