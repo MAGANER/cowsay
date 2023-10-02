@@ -48,7 +48,7 @@ std::vector<std::string> compute_lines(int argc, char** argv, size_t len)
 	{
 		if (line.size() + strlen(argv[i]) >= len)
 		{
-			lines.push_back(line);
+			lines.push_back("|"+line);
 			line.clear();
 			line += argv[i];
 			line += " ";
@@ -91,7 +91,7 @@ void print_message(std::vector<std::string>& lines)
 		std::string s(max , ' '); s += "|";
 		for (size_t i = 0; i < l.size(); i++)
 			s[i] = l[i];
-		printf("| %s\n", s.c_str());    //print message
+		printf("%s\n", s.c_str());    //print message
 	}
 	printf("%s\n", std::string(max + 2, '=').c_str()); //print low border
 }
@@ -133,7 +133,7 @@ int main(int argc, char** argv)
 	{
 		if (argc == 1)
 		{
-			std::vector<std::string> l = {"moo?"};
+			std::vector<std::string> l = {"|moo?"};
 			print_message(l);
 			print_cow();
 			return 0;
