@@ -1,4 +1,5 @@
 #include"PipeReader.h"
+#include"cxxopts.hpp"
 #include<vector>
 #include<string>
 #include <sstream>    //getline
@@ -6,12 +7,15 @@
 #include<filesystem>  //is_regular_file
 #include<algorithm>   //max_element, remove
 
+#include<functional> //function
+#define TO_PRED(x) std::function<bool(char)>(x)
+
 #ifdef __linux__
 #include <unistd.h>
 #endif
 
 
-bool isnewline(int ch) 
+bool isnewline(char ch) 
 {
 	switch (ch) {
 	case '\r':
@@ -21,14 +25,15 @@ bool isnewline(int ch)
 	}
 	return false;
 }
-std::vector<std::string> split_string(const std::string& str)
+std::vector<std::string> split_string(const std::string& str,
+									  const std::function<bool(char)>& pred)
 {
 	std::vector<std::string> strings;
 
 	std::string buffer;
 	for (auto& ch : str)
 	{
-		if (isnewline(ch))
+		if (pred(ch))
 		{
 			strings.push_back("|"+buffer);
 			buffer.clear();
@@ -39,25 +44,20 @@ std::vector<std::string> split_string(const std::string& str)
 	return strings;
 }
 
-void read_argv(int argc, char** argv, size_t len, std::vector<std::string>& buffer)
+void read_argv(const std::string& str, size_t len, std::vector<std::string>& buffer)
 {
-	//split argv arguments into lines with special size
-
+	//split argv  into lines with special size
+	auto words = split_string(str+" ", TO_PRED(isspace));
 	std::string line;
-	for (size_t i = 1; i < argc; i++)
+
+	for (auto& w : words)
 	{
-		if (line.size() + strlen(argv[i]) >= len)
+		if (w.size() + line.size() >= len)
 		{
 			buffer.push_back("|"+line);
 			line.clear();
-			line += argv[i];
-			line += " ";
 		}
-		else
-		{
-			line += argv[i];
-			line += " ";
-		}
+		line += w.substr(1)+" ";//erase | at the beginning
 	}
 	buffer.push_back("|"+line);
 }
@@ -120,7 +120,7 @@ int main(int argc, char** argv)
 	src = readall(stdin, &len);
 	if (src)
 	{
-		buffer = split_string(src);
+		buffer = split_string(src,TO_PRED(isnewline));
 
 		//get rid of tabs, because they will break cloud
 		for(auto& l: buffer)
@@ -138,8 +138,16 @@ int main(int argc, char** argv)
   }
   else
   {
-	//every line contains up to 20 characters
-	read_argv(argc, argv, 20,buffer);
+	cxxopts::Options options("cowsay", "cow to show textual data on terminal screen");
+	options.add_options()("s", "print text", cxxopts::value<std::string>());
+
+	auto result = options.parse(argc, argv);
+	if (result.arguments_string().find("-s"))
+	{
+		auto text = result["s"].as<std::string>();
+		read_argv(text,20, buffer);
+	}
+
 	print_message(buffer);
 	print_cow();
    }
