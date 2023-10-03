@@ -1,14 +1,10 @@
 #include"PipeReader.h"
 #include<vector>
+#include<string>
 #include <sstream>    //getline
 #include<fstream>     //ifstream
 #include<filesystem>  //is_regular_file
-#include<string>
-#include<algorithm>
-
-#ifdef __linux__
-#include<unistd.h>
-#endif
+#include<algorithm>   //max_element, remove
 
 bool isnewline(int ch) 
 {
@@ -38,17 +34,16 @@ std::vector<std::string> split_string(const std::string& str)
 	return strings;
 }
 
-std::vector<std::string> compute_lines(int argc, char** argv, size_t len)
+void read_argv(int argc, char** argv, size_t len, std::vector<std::string>& buffer)
 {
 	//split argv arguments into lines with special size
-	std::vector<std::string> lines;
 
 	std::string line;
 	for (size_t i = 1; i < argc; i++)
 	{
 		if (line.size() + strlen(argv[i]) >= len)
 		{
-			lines.push_back("|"+line);
+			buffer.push_back("|"+line);
 			line.clear();
 			line += argv[i];
 			line += " ";
@@ -59,8 +54,7 @@ std::vector<std::string> compute_lines(int argc, char** argv, size_t len)
 			line += " ";
 		}
 	}
-	lines.push_back(line);
-	return lines;
+	buffer.push_back("|"+line);
 }
 void print_cow()
 {
@@ -107,46 +101,40 @@ void pad(std::string& line, size_t max)
 
 int main(int argc, char** argv)
 {
+
+	std::vector<std::string> buffer;
+  if((fseek(stdin, 0, SEEK_END), ftell(stdin)) > 0)
+  {
 	char* src = nullptr;
 	size_t   len;
-#ifdef __linux__
-  if(!isatty(0))
-  {
-#endif
 	src = readall(stdin, &len);
 	if (src)
 	{
-		auto lines = split_string(src);
+		buffer = split_string(src);
 
 		//get rid of tabs, because they will break cloud
-		for(auto& l:lines)
+		for(auto& l: buffer)
 			l.erase(std::remove(l.begin(), l.end(), '\t'), l.end());
 
-		print_message(lines);
-		print_cow();
 		free(src);
 	}
-#ifdef __linux__	
   }
-#endif
-	else
-	{
-		if (argc == 1)
-		{
-			std::vector<std::string> l = {"|moo?"};
-			print_message(l);
-			print_cow();
-			return 0;
-		}
-		else
-		{
-			//every line contains up to 20 characters
-			auto lines = compute_lines(argc, argv, 20);
-			print_message(lines);
-			print_cow();
-		}
+
+  if (argc == 1 and buffer.empty())
+  {
+	std::vector<std::string> l = {"|moo?"};
+	print_message(l);
+	print_cow();
+  }
+  else
+  {
+	//every line contains up to 20 characters
+	read_argv(argc, argv, 20,buffer);
+	print_message(buffer);
+	print_cow();
+   }
 		
-	}
+
 
 	
 	return 0;
