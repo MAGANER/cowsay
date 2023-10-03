@@ -141,7 +141,17 @@ int main(int argc, char** argv)
 	cxxopts::Options options("cowsay", "cow to show textual data on terminal screen");
 	options.add_options()("s", "print text", cxxopts::value<std::string>());
 
-	auto result = options.parse(argc, argv);
+	cxxopts::ParseResult result;
+	try
+	{
+		result = options.parse(argc, argv);
+	}
+	catch (const std::exception& e)
+	{
+		printf("%s", e.what());
+		exit(-1);
+	}
+
 	if (result.arguments_string().find("-s"))
 	{
 		auto text = result["s"].as<std::string>();
