@@ -2,13 +2,12 @@
 yet another cowsay clone that pretends to be better than any other ones.
 
 ## Usage
-```-f``` to pass file
-```-t``` to pass any text as command line argument
+```-s``` pass text
 
 Also you can use pipes
 
 ```
-$ cowsay -f ..\.gitignore
+$ ls | cowsay
 -----------------------------
 | .git                       |
 | .gitignore                 |
