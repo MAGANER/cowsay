@@ -6,6 +6,11 @@
 #include<filesystem>  //is_regular_file
 #include<algorithm>   //max_element, remove
 
+#ifdef __linux__
+#include <unistd.h>
+#endif
+
+
 bool isnewline(int ch) 
 {
 	switch (ch) {
@@ -103,7 +108,12 @@ int main(int argc, char** argv)
 {
 
 	std::vector<std::string> buffer;
-  if((fseek(stdin, 0, SEEK_END), ftell(stdin)) > 0)
+#ifdef __linux__
+  if(!isatty(0))
+#endif
+#ifdef _WIN32
+  if ((fseek(stdin, 0, SEEK_END), ftell(stdin)) > 0)
+#endif
   {
 	char* src = nullptr;
 	size_t   len;
