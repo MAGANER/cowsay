@@ -3,6 +3,6 @@ project(cowsay)
 set (CMAKE_CXX_STANDARD 17)
 
 set(SOURCE main.cpp)
-set(HEADERS PipeReader.h cxxopts.hpp)
+set(HEADERS PipeReader.h ArgumentParser.h)
 
 add_executable(cowsay ${SOURCE} ${HEADERS})

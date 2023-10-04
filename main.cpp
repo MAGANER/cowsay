@@ -1,13 +1,13 @@
 #include"PipeReader.h"
-#include"cxxopts.hpp"
+#include"ArgumentParser.h"
 #include<vector>
-#include<string>
 #include <sstream>    //getline
 #include<fstream>     //ifstream
 #include<filesystem>  //is_regular_file
 #include<algorithm>   //max_element, remove
-
 #include<functional> //function
+
+
 #define TO_PRED(x) std::function<bool(char)>(x)
 
 #ifdef __linux__
@@ -98,15 +98,9 @@ size_t get_max_size(const std::vector<std::string>& lines)
 {
 	return (*std::max_element(lines.begin(), lines.end(), [](auto& a, auto& b) { return a.size() < b.size(); })).size();
 }
-void pad(std::string& line, size_t max)
-{
-	while (line.size() != max)
-		line += "#";
-}
-
 int main(int argc, char** argv)
 {
-
+	//read from stdin pipe
 	std::vector<std::string> buffer;
 #ifdef __linux__
   if(!isatty(0))
@@ -130,6 +124,7 @@ int main(int argc, char** argv)
 	}
   }
 
+
   if (argc == 1 and buffer.empty())
   {
 	std::vector<std::string> l = {"|moo?"};
@@ -138,25 +133,14 @@ int main(int argc, char** argv)
   }
   else
   {
-	cxxopts::Options options("cowsay", "cow to show textual data on terminal screen");
-	options.add_options()("s", "print text", cxxopts::value<std::string>());
+	//parse arguments and apply them
+	  auto arguments = parse_arguments(argc, argv);
 
-	cxxopts::ParseResult result;
-	try
-	{
-		result = options.parse(argc, argv);
-	}
-	catch (const std::exception& e)
-	{
-		printf("%s", e.what());
-		exit(-1);
-	}
+	  if (arguments.find("-s") != arguments.end())
+	  {
+		  read_argv(arguments["-s"], 20, buffer);
+	  }
 
-	if (result.arguments_string().find("-s"))
-	{
-		auto text = result["s"].as<std::string>();
-		read_argv(text,20, buffer);
-	}
 
 	print_message(buffer);
 	print_cow();
