@@ -8,6 +8,17 @@ $ cowsay -s hello
 $ cowsay -s "hello, cruel world!"
 ```
 
+```-e``` change eyes
+```
+$ cowsay -e @
+```
+
+```-w``` change output width for -s option
+```
+$ cowsay -w 40
+P.S. 20 is default value
+```
+
 Also you can use pipes<br>
 ```
 $ ls | cowsay
