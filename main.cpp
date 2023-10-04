@@ -136,11 +136,30 @@ int main(int argc, char** argv)
 	//parse arguments and apply them
 	  auto arguments = parse_arguments(argc, argv);
 
+	  std::string text_to_say;
+	  int line_width = 20;
 	  if (arguments.find("-s") != arguments.end())
 	  {
-		  read_argv(arguments["-s"], 20, buffer);
+		  text_to_say = arguments["-s"];
+	  }
+	  if (arguments.find("-w") != arguments.end())
+	  {
+		  auto width_str = arguments["-w"];
+		  if (is_str_number(width_str))
+		  {
+			  line_width = atoi(width_str.c_str());
+		  }
+		  else
+		  {
+			  printf("%s must be digit value", width_str.c_str());
+			  exit(-1);
+		  }
 	  }
 
+	  if (!text_to_say.empty())
+	  {
+		  read_argv(arguments["-s"], line_width, buffer);
+	  }
 
 	print_message(buffer);
 	print_cow();

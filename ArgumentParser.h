@@ -9,7 +9,7 @@
 static std::unordered_map<std::string, std::string> parse_arguments(int argc, char** argv)
 {
 	std::unordered_map<std::string, std::string> args;
-	const std::string arguments = "-s";
+	const std::string arguments = "-s-w";
 
 	std::string value,argument;
 	bool get_val = false;
@@ -65,5 +65,12 @@ static std::unordered_map<std::string, std::string> parse_arguments(int argc, ch
 
 	return args;
 }
+static bool is_str_number(const std::string& str)
+{
+	for (auto& c : str)
+		if (!isdigit(c))
+			return false;
 
+	return true;
+}
 #endif
