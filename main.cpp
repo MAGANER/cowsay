@@ -61,19 +61,19 @@ void read_argv(const std::string& str, size_t len, std::vector<std::string>& buf
 	}
 	buffer.push_back("|"+line);
 }
-void print_cow()
+void print_cow(char cow_eye)
 {
 	//one system call is better then several
 	std::string cow;
 	cow += "\n          \\\n";
 	cow += "           \\\n";
 	cow += "               ^__^ \n";
-	cow += "               (oo)_______ \n";
+	cow += "               (%c%c)_______ \n";
 	cow += "               (__)\       )\\/\\ \n";
 	cow += "                   ||----w |  \n";
 	cow += "                   ||     || \n";
 	
-	printf(cow.c_str());
+	printf(cow.c_str(),cow_eye,cow_eye);
 }
 void print_message(std::vector<std::string>& lines)
 {
@@ -129,7 +129,7 @@ int main(int argc, char** argv)
   {
 	std::vector<std::string> l = {"|moo?"};
 	print_message(l);
-	print_cow();
+	print_cow('o');
   }
   else
   {
@@ -137,6 +137,7 @@ int main(int argc, char** argv)
 	  auto arguments = parse_arguments(argc, argv);
 
 	  std::string text_to_say;
+	  char cow_eye = 'o';
 	  int line_width = 20;
 	  if (arguments.find("-s") != arguments.end())
 	  {
@@ -155,14 +156,33 @@ int main(int argc, char** argv)
 			  exit(-1);
 		  }
 	  }
+	  if (arguments.find("-e") != arguments.end())
+	  {
+		  auto eye = arguments["-e"];
+		  if (eye.size() != 1)
+		  {
+			  printf("eye must be one character or you want to get a mutant cow?\n Sounds good actually...\n");
+			  srand(0);
+			  exit(rand());
+		  }
+		  cow_eye = eye[0];
+	  }
 
 	  if (!text_to_say.empty())
 	  {
 		  read_argv(arguments["-s"], line_width, buffer);
 	  }
 
-	print_message(buffer);
-	print_cow();
+	  if (buffer.empty())
+	  {
+		  printf("output buffer is empty\n");
+		  exit(-1);
+	  }
+	  else
+	  {
+		  print_message(buffer);
+		  print_cow(cow_eye);
+	  }
    }
 		
 

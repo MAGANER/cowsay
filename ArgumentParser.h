@@ -9,7 +9,7 @@
 static std::unordered_map<std::string, std::string> parse_arguments(int argc, char** argv)
 {
 	std::unordered_map<std::string, std::string> args;
-	const std::string arguments = "-s-w";
+	const std::string arguments = "-s-w-e";
 
 	std::string value,argument;
 	bool get_val = false;
@@ -28,12 +28,22 @@ static std::unordered_map<std::string, std::string> parse_arguments(int argc, ch
 			}
 			else if (current_val[0] != '"' and !start_read_multiline)
 			{
+				if (current_val.empty())
+				{
+					printf("empty option value for %s", argument.c_str());
+					exit(-1);
+				}
 				args[argument] = current_val;
 				get_val = false;
 			}
 			else if (STR_END(current_val) == '"' and start_read_multiline)
 			{
 				value += current_val.substr(0, current_val.size() - 1);
+				if (value.empty())
+				{
+					printf("empty option value for %s",argument.c_str());
+					exit(-1);
+				}
 				args[argument] = value;
 
 				start_read_multiline = false;
