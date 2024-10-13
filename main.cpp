@@ -1,5 +1,6 @@
 #include"PipeReader.h"
 #include"ArgumentParser.h"
+#include"girl.h"
 #include<vector>
 #include <sstream>    //getline
 #include<fstream>     //ifstream
@@ -26,7 +27,7 @@ bool isnewline(char ch)
 	return false;
 }
 std::vector<std::string> split_string(const std::string& str,
-									  const std::function<bool(char)>& pred)
+				      const std::function<bool(char)>& pred)
 {
 	std::vector<std::string> strings;
 
@@ -61,19 +62,12 @@ void read_argv(const std::string& str, size_t len, std::vector<std::string>& buf
 	}
 	buffer.push_back("|"+line);
 }
-void print_cow(char cow_eye)
+void print_girl()
 {
-	//one system call is better then several
-	std::string cow;
-	cow += "\n          \\\n";
-	cow += "           \\\n";
-	cow += "               ^__^ \n";
-	cow += "               (%c%c)_______ \n";
-	cow += "               (__)\       )\\/\\ \n";
-	cow += "                   ||----w |  \n";
-	cow += "                   ||     || \n";
-	
-	printf(cow.c_str(),cow_eye,cow_eye);
+  for(int i = 0;i<girl_len;++i)
+    {
+      printf("%c",girl[i]);
+    }
 }
 void print_message(std::vector<std::string>& lines)
 {
@@ -129,7 +123,7 @@ int main(int argc, char** argv)
   {
 	std::vector<std::string> l = {"|moo?"};
 	print_message(l);
-	print_cow('o');
+	print_girl();
   }
   else
   {
@@ -181,7 +175,7 @@ int main(int argc, char** argv)
 	  else
 	  {
 		  print_message(buffer);
-		  print_cow(cow_eye);
+		  print_girl();
 	  }
    }
 		
